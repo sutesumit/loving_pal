@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager App</title>
+</head>
+<body>
+    <main>
+        <h1>Task Manager</h1>
+        <form>
+            <fieldset>
+                <label for="task">Task</label>
+                <input id="task" type="text"></input>
+            </fieldset>
+            <fieldset>
+                <label for="description">Description</label>
+                <textarea id="description"></textarea>
+            </fieldset>
+            <fieldset>
+                <label for="date">Date</label>
+                <input id="date" type="date"></input>
+            </fieldset>
+            <input id="submit" type="submit" value="Add Task"></input>
+        </form>
+        <ul id="task-list">
+        </ul>
+    </main>
+    <script src="index.js"></script>
+</body>
+</html>

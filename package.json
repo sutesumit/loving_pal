@@ -1,0 +1,20 @@
+{
+  "name": "loving_pal",
+  "version": "1.0.0",
+  "description": "Backend for ToDo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sutesumit/canonical_exercise_1.git"
+  },
+  "author": "Sumit Sute",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sutesumit/canonical_exercise_1/issues"
+  },
+  "homepage": "https://github.com/sutesumit/canonical_exercise_1#readme"
+}

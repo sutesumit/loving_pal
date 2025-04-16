@@ -50,6 +50,7 @@ const addNewTask = (taskList, taskObject) => {
     const checkBoxField = document.createElement('fieldset')
     const checkBox = document.createElement('input')
     const checkBoxLabel = document.createElement('label')
+    checkBoxLabel.setAttribute('for', checkBox.id)
     checkBoxLabel.innerText = 'Mark Complete'
     checkBox.setAttribute('id', `check-${Date.now()}`)
 

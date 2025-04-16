@@ -1,78 +1,110 @@
 
 
 const form = document.querySelector('form')
-const list = document.getElementById('task-list')
-const taskName = document.getElementById('task')
-const description = document.getElementById('description')
-const date = document.getElementById('date')
 
-const getTaskParams = () => {
-    return {
-        'task' : taskName.value,
-        'description' : description.value,
-        'date' : date.value
-        }
+const tasks = []
+
+const checkTaskList = () => {
+    tasks.map((task) => console.log(task))
 }
+const allTask = document.createElement('div')
+const checkTasksButton = document.createElement('div')
+checkTasksButton.addEventListener('click', ()=> checkTaskList())
+checkTasksButton.innerText = 'All Tasks'
 
-const clearFields = () => {
-    taskName.value = ''
-    description.value = ''
-    date.value= ''
-}
+form.appendChild(checkTasksButton)
 
-const deleteTask = (listItem) => {
-    listItem.remove()
-}
+const getTaskObject = () => {
+    
+    const id = Date.now().toString()
+    const task = document.getElementById('task').value
+    const description = document.getElementById('description').value
+    const date = document.getElementById('date').value
+    const checkValue = false
 
-const toggleTaskDone = (task, checkMark) => {
-    const opacity = checkMark ? 0.3 : 1 
-    task.setAttribute(`style`, `opacity: ${opacity}`)
-}
-
-const addNewTask = (taskList, taskObject) => {
-    const { task, description, date } = taskObject
-
-    if (taskObject.task.trim() == ''){
-        alert ('Forgot to add task Name')
+    if (task.trim() == ''){
+        alert('Fill the task name!')
         return
     }
-    const listItem = document.createElement('li')
-    listItem.id = `task-${Date.now()}`
-    listItem.innerHTML = `<strong>${task}</strong>`
+    const taskObject = { id, task, description, date, checkValue}
+    return taskObject
+}
 
-    const listProps = document.createElement('div')
-    listProps.innerText = `${description} \n ${date}`
+const addTask = () => {    
+    const taskObject = getTaskObject()
+    if (taskObject){
+        tasks.push(taskObject)
+        renderTasks()
+        clearForm()
+    }
+}
 
-    const deleteButton = document.createElement('button')    
-    deleteButton.innerText = 'Kill Task'
-    deleteButton.addEventListener('click', () => deleteTask(listItem))
+const removeTask = (task, taskBlock) => {
+    const removeTaskId = task.id
+    if(task){
+        const deleteIndex = tasks.findIndex((item) => (item.id == removeTaskId))
+        console.log(`Wish to remove ${task.task} task with index ${deleteIndex}`)
+        tasks.splice(deleteIndex, 1)
+        renderTasks()
+    }
+}
 
-    const checkBoxField = document.createElement('fieldset')
-    const checkBox = document.createElement('input')
-    const checkBoxLabel = document.createElement('label')
-    checkBoxLabel.setAttribute('for', checkBox.id)
-    checkBoxLabel.innerText = 'Mark Complete'
-    checkBox.setAttribute('id', `check-${Date.now()}`)
+const toggleCheck = (task, taskBlock) => {
+    task.checkValue = !task.checkValue
+    console.log(`Task ${task.task} has checkValue: ${task.checkValue}`)
+    taskBlock.setAttribute(`style`, `opacity : ${task.checkValue ? 0.3 : 1}`)
 
-    checkBoxField.appendChild(checkBox)
-    checkBoxField.appendChild(checkBoxLabel)
-    checkBox.setAttribute('type', 'checkbox')
-    checkBox.addEventListener('change', ()=> {
-        toggleTaskDone(listItem, checkBox.checked)
+}
+
+const clearForm = () => {
+    document.getElementById('task').value = ''
+    document.getElementById('description').value = ''
+    document.getElementById('date').value = ''
+}
+
+const createTaskBlock = (task) => {
+    const taskBlock = document.createElement('li')
+
+    const taskTitle = document.createElement('h4')
+    taskTitle.innerText = task.task
+
+    const taskDescription = document.createElement('p')
+    taskDescription.innerText = task.description
+
+    const taskDate = document.createElement('time')
+    taskDate.innerText = task.date
+
+    const deleteTask = document.createElement('button')
+    deleteTask.innerText = 'Kill Task'
+    deleteTask.addEventListener('click', () => removeTask(task, taskBlock))
+
+    const checkTask = document.createElement('input')
+    checkTask.setAttribute('type', 'checkbox')
+    checkTask.checked = task.checkValue
+    checkTask.addEventListener('change', ()=> toggleCheck(task, taskBlock))
+
+    taskBlock.appendChild(taskTitle)
+    taskBlock.appendChild(taskDescription)
+    taskBlock.appendChild(taskDate)
+    taskBlock.appendChild(checkTask)
+    taskBlock.appendChild(deleteTask)
+    return taskBlock
+
+}
+
+const renderTasks = () => {
+    const taskList = document.getElementById('task-list')
+    taskList.innerHTML = ''
+    tasks.forEach((task) => {
+        const taskBlock = createTaskBlock(task)
+        taskList.appendChild(taskBlock)
     })
 
-        
-
-    listItem.appendChild(listProps)
-    listItem.appendChild(deleteButton)
-    listItem.appendChild(checkBoxField)
-
-    taskList.appendChild(listItem)
-    clearFields()
 }
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()
-    const taskObject = getTaskParams()
-    addNewTask(list, taskObject)
+    addTask()
 })
+
+

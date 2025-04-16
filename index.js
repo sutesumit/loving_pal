@@ -24,6 +24,11 @@ const deleteTask = (listItem) => {
     listItem.remove()
 }
 
+const toggleTaskDone = (task, checkMark) => {
+    const opacity = checkMark ? 0.3 : 1 
+    task.setAttribute(`style`, `opacity: ${opacity}`)
+}
+
 const addNewTask = (taskList, taskObject) => {
     const { task, description, date } = taskObject
 
@@ -51,6 +56,10 @@ const addNewTask = (taskList, taskObject) => {
     checkBoxField.appendChild(checkBox)
     checkBoxField.appendChild(checkBoxLabel)
     checkBox.setAttribute('type', 'checkbox')
+    checkBox.addEventListener('change', ()=> {
+        toggleTaskDone(listItem, checkBox.checked)
+    })
+
         
 
     listItem.appendChild(listProps)

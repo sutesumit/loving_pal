@@ -5,7 +5,7 @@ const PORT = 3000
 const app = express()
 
 app.use(express.json())
-// app.use(express.static(__dirname))
+app.use(express.static(__dirname))
 
 const tasks = []
 
@@ -27,8 +27,12 @@ app.get('/api/tasks/:id', (req, res)=> {
 })
 
 app.delete('/api/tasks/:id', (req, res) => {
-    const id = parseInt(req.params.id)
+    const id = req.params.id
     const taskIndex = tasks.findIndex((task) => task.id === id)
+    if (taskIndex == -1){
+        console.log('Opps')
+        return res.status(404).json({ message: 'Task not found' })
+    }
     tasks.splice(taskIndex, 1)
     res.status(204).json({
         message: `Task successfully deleted.`

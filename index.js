@@ -1,12 +1,6 @@
-
-
 const form = document.querySelector('form')
 
-const tasks = []
 
-const saveToLS = () => {
-    localStorage.setItem('tasks', JSON.stringify(tasks))
-}
 
 
 const getTaskObject = () => {
@@ -25,35 +19,40 @@ const getTaskObject = () => {
 }
 
 // Pushes a new task  into the array
-const addTask = () => {    
+const addTask = async () => {    
     const taskObject = getTaskObject()
     if (taskObject){
-        tasks.push(taskObject)
-        saveToLS()
+    await fetch('/api/tasks', { 
+            headers : { 'Content-type' : 'application/json'}, 
+            method: 'POST',
+            body: JSON.stringify(taskObject)
+        })
         renderTasks()
         clearForm()
     }
 }
 
 // Deletes a task from the array
-const removeTask = (task, taskBlock) => {
+const removeTask = async (task, taskBlock) => {
     const removeTaskId = task.id
     if(task){
-        const deleteIndex = tasks.findIndex((item) => (item.id == removeTaskId))
-        tasks.splice(deleteIndex, 1)
-        saveToLS()
+        await fetch(`/api/tasks/${removeTaskId}`,{
+            method: 'DELETE'
+        })
         renderTasks()
     }
 }
 
 
-const toggleCheck = (task, taskBlock) => {
+const toggleCheck = async (task, taskBlock) => {
     task.checkValue = !task.checkValue
     const updateTaskId = task.id
     if (task){
-        const updateIndex = tasks.findIndex((item)=> item.id == updateTaskId)
-        tasks[updateIndex] = task
-        saveToLS()
+        await fetch(`/api/tasks/${updateTaskId}`, {
+            headers: { 'Content-type' : 'application/json' },
+            method: 'PUT',
+            body: JSON.stringify(task)
+        })
         renderTasks()
     }
 }
@@ -95,25 +94,18 @@ const createTaskBlock = (task) => {
 
 }
 
-const renderTasks = () => {
+const renderTasks = async () => {
     const taskList = document.getElementById('task-list')
     taskList.innerHTML = ''
+    const res = await fetch('/api/tasks', { method: 'GET'})
+    const resJson = await res.json()
+    const tasks = resJson.data || []
     tasks.forEach((task) => {
         const taskBlock = createTaskBlock(task)
         taskList.appendChild(taskBlock)
     })
 
 }
-
-const getFromLS = () => {
-    const stringedData = localStorage.getItem('tasks')
-    if (stringedData){
-        tasks.push(...JSON.parse(stringedData))
-    }
-    renderTasks()
-}
-
-getFromLS()
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()

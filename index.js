@@ -43,7 +43,6 @@ const removeTask = (task, taskBlock) => {
     const removeTaskId = task.id
     if(task){
         const deleteIndex = tasks.findIndex((item) => (item.id == removeTaskId))
-        console.log(`Wish to remove ${task.task} task with index ${deleteIndex}`)
         tasks.splice(deleteIndex, 1)
         renderTasks()
     }
@@ -51,7 +50,6 @@ const removeTask = (task, taskBlock) => {
 
 const toggleCheck = (task, taskBlock) => {
     task.checkValue = !task.checkValue
-    console.log(`Task ${task.task} has checkValue: ${task.checkValue}`)
     taskBlock.setAttribute(`style`, `opacity : ${task.checkValue ? 0.3 : 1}`)
 
 }

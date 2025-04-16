@@ -4,18 +4,12 @@ const form = document.querySelector('form')
 
 const tasks = []
 
-const checkTaskList = () => {
-    tasks.map((task) => console.log(task))
+const saveToLS = () => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
 }
-const allTask = document.createElement('div')
-const checkTasksButton = document.createElement('div')
-checkTasksButton.addEventListener('click', ()=> checkTaskList())
-checkTasksButton.innerText = 'All Tasks'
 
-form.appendChild(checkTasksButton)
 
 const getTaskObject = () => {
-    
     const id = Date.now().toString()
     const task = document.getElementById('task').value
     const description = document.getElementById('description').value
@@ -30,28 +24,38 @@ const getTaskObject = () => {
     return taskObject
 }
 
+// Pushes a new task  into the array
 const addTask = () => {    
     const taskObject = getTaskObject()
     if (taskObject){
         tasks.push(taskObject)
+        saveToLS()
         renderTasks()
         clearForm()
     }
 }
 
+// Deletes a task from the array
 const removeTask = (task, taskBlock) => {
     const removeTaskId = task.id
     if(task){
         const deleteIndex = tasks.findIndex((item) => (item.id == removeTaskId))
         tasks.splice(deleteIndex, 1)
+        saveToLS()
         renderTasks()
     }
 }
 
+
 const toggleCheck = (task, taskBlock) => {
     task.checkValue = !task.checkValue
-    taskBlock.setAttribute(`style`, `opacity : ${task.checkValue ? 0.3 : 1}`)
-
+    const updateTaskId = task.id
+    if (task){
+        const updateIndex = tasks.findIndex((item)=> item.id == updateTaskId)
+        tasks[updateIndex] = task
+        saveToLS()
+        renderTasks()
+    }
 }
 
 const clearForm = () => {
@@ -62,6 +66,7 @@ const clearForm = () => {
 
 const createTaskBlock = (task) => {
     const taskBlock = document.createElement('li')
+    taskBlock.setAttribute(`style`, `opacity : ${task.checkValue ? 0.3 : 1}`)
 
     const taskTitle = document.createElement('h4')
     taskTitle.innerText = task.task
@@ -99,6 +104,16 @@ const renderTasks = () => {
     })
 
 }
+
+const getFromLS = () => {
+    const stringedData = localStorage.getItem('tasks')
+    if (stringedData){
+        tasks.push(...JSON.parse(stringedData))
+    }
+    renderTasks()
+}
+
+getFromLS()
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()

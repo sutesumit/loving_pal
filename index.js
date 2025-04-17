@@ -2,23 +2,24 @@ const form = document.querySelector('form')
 
 
 const getTaskObject = () => {
-    const id = Date.now().toString()
     const task = document.getElementById('task').value
     const description = document.getElementById('description').value
-    const date = document.getElementById('date').value
+    const date = document.getElementById('date').value || null
+    console.log(date)
     const checkValue = false
 
     if (task.trim() == ''){
         alert('Fill the task name!')
         return
     }
-    const taskObject = { id, task, description, date, checkValue}
+    const taskObject = { task, description, date, checkValue}
     return taskObject
 }
 
 // Pushes a new task  into the array
 const addTask = async () => {    
     const taskObject = getTaskObject()
+    console.log(taskObject)
     if (taskObject){
     await fetch('/api/tasks', { 
             headers : { 'Content-type' : 'application/json'}, 
@@ -31,7 +32,7 @@ const addTask = async () => {
 }
 
 // Deletes a task from the array
-const removeTask = async (task, taskBlock) => {
+const removeTask = async (task) => {
     const removeTaskId = task.id
     if(task){
         await fetch(`/api/tasks/${removeTaskId}`,{
@@ -42,9 +43,10 @@ const removeTask = async (task, taskBlock) => {
 }
 
 
-const toggleCheck = async (task, taskBlock) => {
+const toggleCheck = async (task) => {
     task.checkValue = !task.checkValue
     const updateTaskId = task.id
+    console.log(task)
     if (task){
         await fetch(`/api/tasks/${updateTaskId}`, {
             headers: { 'Content-type' : 'application/json' },
@@ -56,9 +58,9 @@ const toggleCheck = async (task, taskBlock) => {
 }
 
 const clearForm = () => {
-    document.getElementById('task').value = ''
-    document.getElementById('description').value = ''
-    document.getElementById('date').value = ''
+    document.getElementById('task').value = null
+    document.getElementById('description').value = null
+    document.getElementById('date').value = null
 }
 
 const createTaskBlock = (task) => {
@@ -76,12 +78,12 @@ const createTaskBlock = (task) => {
 
     const deleteTask = document.createElement('button')
     deleteTask.innerText = 'Kill Task'
-    deleteTask.addEventListener('click', () => removeTask(task, taskBlock))
+    deleteTask.addEventListener('click', () => removeTask(task))
 
     const checkTask = document.createElement('input')
     checkTask.setAttribute('type', 'checkbox')
     checkTask.checked = task.checkValue
-    checkTask.addEventListener('change', ()=> toggleCheck(task, taskBlock))
+    checkTask.addEventListener('change', ()=> toggleCheck(task))
 
     taskBlock.appendChild(taskTitle)
     taskBlock.appendChild(taskDescription)
@@ -94,7 +96,7 @@ const createTaskBlock = (task) => {
 
 const renderTasks = async () => {
     const taskList = document.getElementById('task-list')
-    taskList.innerHTML = ''
+    taskList.innerHTML = null
     const res = await fetch('/api/tasks', { method: 'GET'})
     const resJson = await res.json()
     const tasks = resJson.data || []

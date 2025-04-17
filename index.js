@@ -1,8 +1,6 @@
 const form = document.querySelector('form')
 
 
-
-
 const getTaskObject = () => {
     const id = Date.now().toString()
     const task = document.getElementById('task').value
@@ -106,6 +104,8 @@ const renderTasks = async () => {
     })
 
 }
+
+renderTasks()
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()
